@@ -1,2 +1,238 @@
-# RPT6000
-Cobol program that returns a sales report from multiple files using copylib functionallity
+# RPT6000 – Year-to-Date Sales Report (COBOL)
+
+## Overview
+
+**RPT6000** is a COBOL batch program that generates a **Year-to-Date (YTD) Sales Report** from customer and sales representative master files.
+
+The program reads input data, calculates sales changes, and produces a formatted report including:
+
+* Customer-level sales data
+* Sales representative totals
+* Branch totals
+* Grand totals
+* Year-over-year comparisons (This YTD vs Last YTD)
+
+---
+
+## Features
+
+* 📄 Formatted multi-page report output
+* 📊 Year-to-date vs last-year comparison
+* 📈 Change amount and percentage calculations
+* 🧾 Hierarchical grouping:
+
+  * Customer
+  * Sales Representative
+  * Branch
+  * Grand Total
+* 🕒 Automatic date/time stamping
+* 🔁 Handles pagination and headings
+
+---
+
+## Input Files
+
+The program expects the following input files:
+
+### 1. `CUSTMAST`
+
+Customer master file containing:
+
+* Branch number
+* Sales representative number
+* Customer number and name
+* Sales (This YTD and Last YTD)
+
+> Defined via `COPY CUSTMAST`
+
+---
+
+### 2. `SALESMAS`
+
+Sales representative master file:
+
+* Sales rep number
+* Sales rep name
+
+> Loaded into an in-memory table (up to 100 entries)
+
+---
+
+## Output File
+
+### `SALESRPT`
+
+A formatted report containing:
+
+* Page headers with date/time
+* Customer sales lines
+* Sales rep totals
+* Branch totals
+* Grand totals
+
+---
+
+## Program Flow
+
+1. **Initialization**
+
+   * Opens files
+   * Loads sales rep table into memory
+
+2. **Processing Loop**
+
+   * Reads `CUSTMAST` sequentially
+   * Detects control breaks:
+
+     * Sales rep change
+     * Branch change
+
+3. **Calculations**
+
+   * Computes:
+
+     * Change amount
+     * Percentage change
+   * Handles edge cases:
+
+     * Division by zero → `"N/A"`
+     * Overflow → `"OVRFLW"`
+
+4. **Control Break Logic**
+
+   * Prints totals when:
+
+     * Sales rep changes
+     * Branch changes
+
+5. **Finalization**
+
+   * Prints grand totals
+   * Closes all files
+
+---
+
+## Key Concepts Used
+
+* COBOL **sequential file processing**
+* **OCCURS tables** (Sales rep lookup)
+* **Control break processing**
+* **Packed decimal arithmetic**
+* **Report formatting with fixed-width records**
+
+---
+
+## Report Structure
+
+```
+DATE: MM/DD/YYYY                  YEAR-TO-DATE SALES REPORT        PAGE: n
+TIME: HH:MM                                             RPT6000
+
+BRANCH  SALESREP   CUSTOMER        THIS YTD   LAST YTD   CHANGE   %
+---------------------------------------------------------------------
+
+ 01     10  John D   12345  ABC Co     1000.00   900.00   100.00  11.1
+ ...
+
+             SALES TOTAL ...
+           BRANCH TOTAL ...
+           GRAND TOTAL ...
+```
+
+---
+
+## Notable Logic
+
+### Change Calculation
+
+```cobol
+CHANGE-AMOUNT = THIS-YTD - LAST-YTD
+```
+
+### Percentage Calculation
+
+```cobol
+CHANGE * 100 / LAST-YTD
+```
+
+Special handling:
+
+* `LAST-YTD = 0` → `"N/A"`
+* Overflow → `"OVRFLW"`
+
+---
+
+## Limitations
+
+* Sales rep table limited to **100 entries**
+* Assumes input files are **pre-sorted** by:
+
+  * Branch number
+  * Sales rep number
+* Fixed-width file formats only
+* No error handling for malformed records
+
+---
+
+## How to Run
+
+1. Compile the program with a COBOL compiler (e.g., GnuCOBOL):
+
+```bash
+cobc -x RPT6000.cob
+```
+
+2. Ensure input files are available:
+
+   * `CUSTMAST`
+   * `SALESMAS`
+
+3. Run the program:
+
+```bash
+./RPT6000
+```
+
+4. Output will be written to:
+
+```
+SALESRPT
+```
+
+---
+
+## File Structure
+
+```
+RPT6000/
+├── RPT6000.cob       # Main COBOL program
+├── CUSTMAST copybook
+├── SALESMAS copybook
+└── README.md
+```
+
+---
+
+## Future Improvements
+
+* Add input validation
+* Support larger sales rep tables
+* Export to CSV/modern formats
+* Add parameterized file paths
+* Improve error handling
+
+---
+
+## License
+
+Add your license here (MIT, Apache 2.0, etc.)
+
+---
+
+## Notes
+
+This project is a classic example of **legacy-style COBOL reporting systems**, demonstrating:
+
+* Batch processing patterns
+* Control-break report generation
+* Structured business logic in COBOL
