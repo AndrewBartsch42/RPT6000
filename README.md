@@ -162,45 +162,6 @@ Special handling:
 
 ---
 
-## Limitations
-
-* Sales rep table limited to **100 entries**
-* Assumes input files are **pre-sorted** by:
-
-  * Branch number
-  * Sales rep number
-* Fixed-width file formats only
-* No error handling for malformed records
-
----
-
-## How to Run
-
-1. Compile the program with a COBOL compiler (e.g., GnuCOBOL):
-
-```bash
-cobc -x RPT6000.cob
-```
-
-2. Ensure input files are available:
-
-   * `CUSTMAST`
-   * `SALESMAS`
-
-3. Run the program:
-
-```bash
-./RPT6000
-```
-
-4. Output will be written to:
-
-```
-SALESRPT
-```
-
----
-
 ## File Structure
 
 ```
@@ -210,29 +171,5 @@ RPT6000/
 ├── SALESMAS copybook
 └── README.md
 ```
+---  
 
----
-
-## Future Improvements
-
-* Add input validation
-* Support larger sales rep tables
-* Export to CSV/modern formats
-* Add parameterized file paths
-* Improve error handling
-
----
-
-## License
-
-Add your license here (MIT, Apache 2.0, etc.)
-
----
-
-## Notes
-
-This project is a classic example of **legacy-style COBOL reporting systems**, demonstrating:
-
-* Batch processing patterns
-* Control-break report generation
-* Structured business logic in COBOL
